@@ -4,7 +4,7 @@ Neural Networks for [symtorch](https://github.com/benglard/symtorch).
 
 As much as symtorch is still a work-in-progress, symnn is a work-in-progress even more so.
 
-TODO:
+## TODO:
 * __tostring for symnn.Sequential
 * Cost layers/criterions (ClassNLL, MSE, CrossEntropy, Hinge)
 * Test and get everything actually working
@@ -17,8 +17,9 @@ TODO:
 * Embedding layers
 * preprocessing
 * more training/optim methods
+* even more
 
-(Future) Example Usage
+## (Future) Example Usage
 
 ```lua
 require 'symnn'
