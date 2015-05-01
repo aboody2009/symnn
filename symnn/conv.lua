@@ -16,7 +16,9 @@ local SpatialConvolution = Class {
          b[i]:fill(self.b[i])
       end
       return conv + b
-   end
+   end,
+
+   __tostring = function(self) return 'symnn.SpatialConvolution' end
 }
 
 local SpatialMaxPooling = Class {
@@ -32,7 +34,9 @@ local SpatialMaxPooling = Class {
    forward = function(self, input)
       return symtorch.maxpool2d(input,
          self.sx, self.sy, self.stride, self.pad)
-   end
+   end,
+
+   __tostring = function(self) return 'symnn.SpatialMaxPooling' end
 }
 
 return {

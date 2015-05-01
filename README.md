@@ -5,7 +5,6 @@ Neural Networks for [symtorch](https://github.com/benglard/symtorch).
 As much as symtorch is still a work-in-progress, symnn is a work-in-progress even more so.
 
 ## TODO:
-* __tostring for symnn.Sequential
 * Cost layers/criterions (ClassNLL, MSE, CrossEntropy, Hinge)
 * Test and get everything actually working
 * Examples

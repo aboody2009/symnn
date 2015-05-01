@@ -22,11 +22,23 @@ return {
 
       training = function(self, val)
          self.isTraining = val
-         symtorch._graph.needs_backprop = val
+         symtorch._graph.needsBackprop = val
       end,
 
-      __tostring = function()
-         return 'Sequential'
+      __tostring = function(self)
+         local tab = '  '
+         local line = '\n'
+         local next = ' -> '
+         local str = 'nn.Sequential {' .. line .. tab .. '[input'
+         for i = 1, #self.layers do
+            str = str .. next .. '(' .. i .. ')'
+         end
+         str = str .. next .. 'output]'
+         for i = 1, #self.layers do
+            str = str .. line .. tab .. '(' .. i .. '): ' .. tostring(self.layers[i]):gsub(line, line .. tab)
+         end
+         str = str .. line .. '}'
+         return str
       end
    }
 }

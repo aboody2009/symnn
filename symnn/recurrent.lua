@@ -32,7 +32,9 @@ local RNN = Class {
       local res = symtorch.scan{fn=step, sequences={input, mem}}
       local final = res[#res][1]
       return self.W_od:dot(final) + self.b_od
-   end
+   end,
+
+   __tostring = function(self) return 'symnn.RNN' end
 }
 
 local LSTM = Class {
@@ -82,7 +84,9 @@ local LSTM = Class {
       local res = symtorch.scan{fn=step, sequences={input, mem}}
       local final = res[#res][1]
       return self.W_od:dot(final) + self.b_od
-   end
+   end,
+
+   __tostring = function(self) return 'symnn.LSTM' end
 }
 
 return {
