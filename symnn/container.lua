@@ -22,7 +22,7 @@ return {
 
       training = function(self, val)
          self.isTraining = val
-         symtorch._graph.needsBackprop = val
+         _graph.needsBackprop = val
       end,
 
       __tostring = function(self)
