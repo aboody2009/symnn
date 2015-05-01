@@ -7,29 +7,38 @@ local RNN = Class {
       self.hiddenSize = hidden
       self.outputSize = output
 
-      self.W_ih = symtorch.Tensor(hidden, input):rand(0, 0.08)
-      self.b_ih = symtorch.Tensor(hidden, 1)
-      self.W_hh = symtorch.Tensor(hidden, hidden):rand(0, 0.8)
-      self.b_hh = symtorch.Tensor(hidden, 1)
-      self.W_od = symtorch.Tensor(output, hidden):rand(0, 0.8) -- output decoder
+      self.W_hx = symtorch.Tensor(hidden, input):rand(0, 0.08)
+      self.W_hh = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
+      self.b_i = symtorch.Tensor(hidden, 1)
+      self.W_hy = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
+      self.b_y = symtorch.Tensor(hidden, 1)
+      self.W_od = symtorch.Tensor(output, hidden):rand(0, 0.08) -- output decoder
       self.b_od = symtorch.Tensor(output)
 
       self.params = {
-         self.W_ih, self.b_ih,
-         self.W_hh, self.b_hh,
+         self.W_hx, self.W_hh, self.b_i,
+         self.W_hy, self.b_y,
          self.W_od, self.b_od
       }
+
+      self.prev_h = {}
+      for i = 1, input do
+         table.insert(self.prev_h, symtorch.Tensor(hidden, 1))
+      end
    end,
 
    forward = function(self, input)
-      local function step(prev_x, prev_h)
-         h_t = tanh(self.W_ih:dot(prev_x) + self.W_hh:dot(prev_h) + self.b_ih)
-         y_t = self.W_hh:dot(h_t) + self.b_hh
+      local function step(i, x_t, prev_h)
+         h_t = sigmoid(self.W_hx:dot(x_t) + self.W_hh:dot(prev_h) + self.b_i)
+         y_t = self.W_hy:dot(h_t) + self.b_y
+         self.prev_h[i] = h_t
          return h_t, y_t
       end
 
-      local mem = symtorch.Tensor(self.hiddenSize, 1)
-      local res = symtorch.scan{fn=step, sequences={input, mem}}
+      local res = symtorch.scan{
+         fn = step,
+         sequences = {input, self.prev_h}
+      }
       local final = res[#res][1]
       return self.W_od:dot(final) + self.b_od
    end,
@@ -43,45 +52,56 @@ local LSTM = Class {
       self.hiddenSize = hidden
       self.outputSize = output
 
-      self.W_hi = symtorch.Tensor(hidden, input):rand(0, 0.08)
-      self.W_ci = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
+      self.W_xi = symtorch.Tensor(hidden, input):rand(0, 0.08)
+      self.W_hi = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
       self.b_i  = symtorch.Tensor(hidden, 1)
-      self.W_hf = symtorch.Tensor(hidden, input):rand(0, 0.08)
-      self.W_cf = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
+      self.W_xf = symtorch.Tensor(hidden, input):rand(0, 0.08)
+      self.W_hf = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
       self.b_f  = symtorch.Tensor(hidden, 1)
-      self.W_hc = symtorch.Tensor(hidden, input):rand(0, 0.08)
+      self.W_xc = symtorch.Tensor(hidden, input):rand(0, 0.08)
+      self.W_hc = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
       self.b_c  = symtorch.Tensor(hidden, 1)
-      self.W_ho = symtorch.Tensor(hidden, input):rand(0, 0.08)
-      self.W_co = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
+      self.W_xo = symtorch.Tensor(hidden, input):rand(0, 0.08)
+      self.W_ho = symtorch.Tensor(hidden, hidden):rand(0, 0.08)
       self.b_o  = symtorch.Tensor(hidden, 1)
       self.W_od = symtorch.Tensor(output, hidden):rand(0, 0.08) -- output decoder
       self.b_od = symtorch.Tensor(output, 1)
 
       self.params = {
-         self.W_hi, self.W_ci, self.b_i,
-         self.W_hf, self.W_cf, self.b_f,
-         self.W_hc, self.b_c,
-         self.W_ho, self.W_co, self.b_o,
+         self.W_xi, self.W_hi, self.b_i,
+         self.W_xf, self.W_hf, self.b_f,
+         self.W_xc, self.W_hc, self.b_c,
+         self.W_xo, self.W_ho, self.b_o,
          self.W_od, self.b_od
       }
+
+      self.prev_h = {}
+      self.prev_c = {}
+      for i = 1, input do
+         table.insert(self.prev_h, symtorch.Tensor(hidden, 1))
+         table.insert(self.prev_c, symtorch.Tensor(hidden, 1))
+      end
    end,
 
    forward = function(self, input)
-      -- Modeled after
-      -- https://www.cs.toronto.edu/~hinton/absps/RNN13.pdf
-      -- Equations 3-7
+      -- Modeled after http://arxiv.org/pdf/1411.4555v1.pdf
+      -- Equations 4-8
 
-      local function step(prev_h, prev_c)
-         local i_t = sigmoid(self.W_hi:dot(prev_h) + self.W_ci:dot(prev_c) + self.b_i) -- (3)
-         local f_t = sigmoid(self.W_hf:dot(prev_h) + self.W_cf:dot(prev_c) + self.b_f) -- (4)
-         local c_t = f_t * prev_c + i_t * tanh(self.W_hc:dot(prev_h) + self.b_c)       -- (5)
-         local o_t = sigmoid(self.W_ho:dot(prev_h) + self.W_co:dot(prev_c) + self.b_o) -- (6)
-         local h_t = o_t * tanh(c_t)                                                   -- (7)
+      local function step(i, x_t, prev_h, prev_c)
+         local i_t = sigmoid(self.W_xi:dot(x_t) + self.W_hi:dot(prev_h) + self.b_i)                   -- (4)
+         local f_t = sigmoid(self.W_xf:dot(x_t) + self.W_hf:dot(prev_h) + self.b_f)                   -- (5)
+         local c_t = f_t * prev_c + i_t * tanh(self.W_xc:dot(x_t) + self.W_hc:dot(prev_h) + self.b_c) -- (6)
+         local o_t = sigmoid(self.W_xo:dot(x_t) + self.W_ho:dot(prev_h) + self.b_o)                   -- (7)
+         local h_t = o_t * tanh(c_t)                                                                  -- (8)
+         self.prev_h[i] = h_t
+         self.prev_c[i] = c_t
          return h_t, c_t
       end
 
-      local mem = symtorch.Tensor(self.hiddenSize, 1)
-      local res = symtorch.scan{fn=step, sequences={input, mem}}
+      local res = symtorch.scan{
+         fn = step,
+         sequences = {input, self.prev_h, self.prev_c}
+      }
       local final = res[#res][1]
       return self.W_od:dot(final) + self.b_od
    end,
