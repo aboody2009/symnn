@@ -2,14 +2,14 @@
 
 Neural Networks for [symtorch](https://github.com/benglard/symtorch).
 
-As much as symtorch is still a work-in-progress, symnn is a work-in-progress even more so.
+As much as symtorch is still a work-in-progress, symnn is a work-in-progress even more so. It all almost works, but I would not recommend using as of now.
 
 ## TODO:
 * Test and get everything actually working
 * Examples
   1. MNIST
   2. Autoencoder like
-  3. Image captioning like (will scan work for rnn/lstm?)
+  3. Image captioning like? (will scan work for rnn/lstm?)
 * Batched training
 * LeakyReLU/PReLU
 * Embedding layers

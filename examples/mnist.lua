@@ -1,21 +1,23 @@
-require '../symnn'
+local nn = require '../symnn'
 local mnist = require 'mnist' -- https://github.com/andresy/mnist
+require 'optim'
 
-local model = symnn.Sequential(4)
-model:add(symnn.Reshape(784))
-model:add(symnn.Linear(784, 100))
-model:add(symnn.ReLU())
-model:add(symnn.Linear(100, 10))
-model:add(symnn.SoftMax())
-model:add(symnn.ClassNLL())
+local model = nn.Sequential(4)
+model:add(nn.Reshape(784))
+model:add(nn.Linear(784, 100))
+model:add(nn.Sigmoid())
+model:add(nn.Linear(100, 10))
+model:add(nn.SoftMax())
+model:add(nn.ClassNLL())
 print(model)
 
 local trainData = mnist.traindataset()
 --local testData = mnist.testdataset()
 
 local accuracy = function(o, t)
-   local min, argmin = o.w:min(1)
-   if argmin:squeeze() == t then return 1
+   local min, argmax = o.w:max(1)
+   argmax = argmax:squeeze()
+   if argmax == t then return 1
    else return 0 end
 end
 
