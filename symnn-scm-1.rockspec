@@ -21,6 +21,7 @@ build = {
       ['symnn.init'] = 'symnn/init.lua',
       ['symnn.container'] = 'symnn/container.lua',
       ['symnn.conv'] = 'symnn/conv.lua',
+      ['symnn.criterions'] = 'symnn/criterions.lua',
       ['symnn.linear'] = 'symnn/linear.lua',
       ['symnn.nonlinearities'] = 'symnn/nonlinearities.lua',
       ['symnn.recurrent'] = 'symnn/recurrent.lua',
