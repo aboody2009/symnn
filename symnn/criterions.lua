@@ -38,7 +38,6 @@ local MSE = Class {
 local CrossEntropy = Class {
    forward = function(self, input, target)
       local output = symtorch.softmax(input)
-      print(output.w)
       output.w:log() -- LogSoftMax
 
       local argmax
