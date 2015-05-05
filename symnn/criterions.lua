@@ -1,33 +1,48 @@
 local ClassNLL = Class {
-   forward = function(self, input, output, target)
-      -- input was input to softmax
-      -- output was output of softmax
-      -- target is target
+   params = {},
+
+   forward = function(self, input, output)
+      self.input = input
+      self.output = output
+      return output
+   end,
+
+   backward = function(self, target)
       local argmax
       if type(target) == 'number' then
-         assert(target > 0 and target <= input.w:size(1))
+         assert(target > 0 and target <= self.input.w:size(1))
          argmax = target
       elseif target.name == 'Tensor' then
          target, argmax = target.w:max(1)
          argmax = argmax:squeeze()
       end
 
-      input.dw:copy(output.w)
-      input.dw[argmax] = input.dw[argmax] - 1
-      return -torch.log(output.w[argmax])
+      self.input.dw:copy(self.output.w)
+      self.input.dw[argmax] = self.input.dw[argmax] - 1
+      return -torch.log(self.output.w[argmax])
    end,
 
    __tostring = function(self) return 'symnn.ClassNLL' end
 }
 
 local MSE = Class {
-   forward = function(self, input, target)
+   params = {},
+
+   forward = function(self, input, output)
+      self.input = input
+      self.output = output
+      return output
+   end,
+
+   backward = function(self, target)
       if type(target) == 'number' then
-         target = symtorch.Tensor(input.w:size()):fill(target)
+         local argmax = target
+         target = torch.zeros(self.input.w:size())
+         target[argmax] = 1.0
       end
 
-      local diff = torch.add(input.w, -target.w)
-      input.dw:copy(diff)
+      local diff = torch.add(self.input.w, -target)
+      self.input.dw:copy(diff)
       local cost = diff:pow(2):mean()
       return cost
    end,
@@ -36,46 +51,52 @@ local MSE = Class {
 }
 
 local CrossEntropy = Class {
-   forward = function(self, input, target)
-      local output = symtorch.softmax(input)
-      output.w:log() -- LogSoftMax
+   params = {},
 
-      local argmax
-      if type(target) == 'number' then
-         assert(target > 0 and target <= input.w:size(1))
-         argmax = target
-      elseif target.name == 'Tensor' then
-         target, argmax = target.w:max(1)
-         argmax = argmax:squeeze()
-      end
+   __init__ = function(self)
+      self.lsm = symtorch.LogSoftMax()
+      self.nll = symtorch.ClassNLL()
+   end,
 
-      local cost = -output.w[argmax]
-      input.dw:copy(output.w)
-      input.dw[argmax] = input.dw[argmax] - 1
-      return output, cost
+   forward = function(self, input)
+      self.lsmOutput = self.lsm:forward(input)
+      self.nllOutput = self.nll:forward(self.lsmOutput:exp())
+      return self.nllOutput
+   end,
+
+   backward = function(self, target)
+      return self.nll:backward(target)
    end,
 
    __tostring = function(self) return 'symnn.CrossEntropy' end
 }
 
 local Hinge = Class {
-   forward = function(self, input, target)
+   params = {},
+
+   forward = function(self, input, output)
+      self.input = input
+      self.output = output
+      return output
+   end,
+   
+   backward = function(self, target)
       local argmax
       if type(target) == 'number' then
-         assert(target > 0 and target <= input.w:size(1))
+         assert(target > 0 and target <= self.input.w:size(1))
          argmax = target
       elseif target.name == 'Tensor' then
          target, argmax = target.w:max(1)
          argmax = argmax:squeeze()
       end
 
-      local score = input.w[argmax]
+      local score = self.input.w[argmax]
       local margin = 1.0
-      local diff = torch.add(input.w, -score):add(margin)
+      local diff = torch.add(self.input.w, -score):add(margin)
       local cost = diff:sum()
       local grad = diff:gt(0):double()
-      input.dw:add(grad)
-      input.dw[argmax] = input.dw[argmax] - grad:nElement()
+      self.input.dw:add(grad)
+      self.input.dw[argmax] = self.input.dw[argmax] - grad:nElement()
       return cost
    end,
 
