@@ -17,5 +17,6 @@ return {
    Tanh = NonLinear(symtorch.tanh, 'Tanh'),
    Sigmoid = NonLinear(symtorch.sigmoid, 'Sigmoid'),
    ReLU = NonLinear(symtorch.relu, 'ReLU'),
+   Exp = NonLinear(symtorch.exp, 'Exp'),
    Softmax = NonLinear(symtorch.softmax, 'Softmax')
 }
