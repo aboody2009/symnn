@@ -5,6 +5,7 @@ symnn = Package {
    'linear',
    'nonlinearities',
    'conv',
-   'recurrent'
+   'recurrent',
+   'criterions'
 }
 return symnn

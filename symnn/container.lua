@@ -16,8 +16,11 @@ return {
          for i = 1, #self.layers do
             output = self.layers[i]:forward(output)
          end
-         symtorch.update(self.params)
          return output
+      end,
+
+      train = function(self)
+         symtorch.update(self.params)
       end,
 
       training = function(self, val)
