@@ -61,7 +61,6 @@ local Sequential = Class {
    backward = function(self, target)
       local cost = self.layers[#self.layers]:backward(target)
       _graph:backward()
-      symtorch.update(self.params)
       return cost
    end,
 

@@ -19,7 +19,8 @@ local ClassNLL = Class {
 
       self.input.dw:copy(self.output.w)
       self.input.dw[argmax] = self.input.dw[argmax] - 1
-      return -torch.log(self.output.w[argmax])
+      local cost = -torch.log(self.output.w[argmax])
+      return cost
    end,
 
    __tostring = function(self) return 'symnn.ClassNLL' end

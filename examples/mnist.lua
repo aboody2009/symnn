@@ -1,6 +1,7 @@
 local nn = require '../symnn'
 local mnist = require 'mnist' -- https://github.com/andresy/mnist
-require 'optim'
+
+symtorch.update = nn.sgd()
 
 local model = nn.Sequential(4)
 model:add(nn.Reshape(784))

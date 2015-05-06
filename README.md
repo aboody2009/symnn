@@ -9,12 +9,11 @@ As much as symtorch is still a work-in-progress, symnn is a work-in-progress eve
 * Examples
   1. MNIST
   2. Autoencoder like
-  3. Image captioning like? (will scan work for rnn/lstm?)
-* Batched training
+  3. Image captioning like?
+* more training/optim methods
 * LeakyReLU/PReLU
 * Embedding layers
 * preprocessing
-* more training/optim methods
 * even more
 
 ## Example Usage

@@ -24,6 +24,7 @@ build = {
       ['symnn.criterions'] = 'symnn/criterions.lua',
       ['symnn.linear'] = 'symnn/linear.lua',
       ['symnn.nonlinearities'] = 'symnn/nonlinearities.lua',
-      ['symnn.recurrent'] = 'symnn/recurrent.lua',
+      ['symnn.optim'] = 'symnn/optim.lua',
+      ['symnn.recurrent'] = 'symnn/recurrent.lua'
    }
 }
