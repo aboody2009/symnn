@@ -6,7 +6,6 @@ local Window = Class {
       self.size = options.size or 100
       self.minsize = options.minsize or 20
       self.v = {}
-      self.keys = {}
       self.sum = 0
    end,
 

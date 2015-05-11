@@ -1,9 +1,9 @@
 local nn = require '../symnn'
 local mnist = require 'mnist' -- https://github.com/andresy/mnist
 
-symtorch.update = nn.sgd()
+--symtorch.update = nn.sgd()
 
-local model = nn.Sequential(4)
+local model = nn.Sequential(40)
 model:add(nn.Reshape(784))
 model:add(nn.Linear(784, 100))
 model:add(nn.Sigmoid())

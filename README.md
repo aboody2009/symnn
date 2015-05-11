@@ -23,7 +23,7 @@ require 'symnn'
 local model = symnn.Sequential()
 model:add(symnn.Reshape(784))
 model:add(symnn.Linear(784, 100))
-model:add(symnn.ReLU())
+model:add(symnn.Sigmoid())
 model:add(symnn.Linear(100, 10))
 model:add(symnn.SoftMax())
 model:add(symnn.ClassNLL())
@@ -32,7 +32,7 @@ print(model)
 local x = symtorch.Tensor(28, 28):rand()
 local y = model:forward(x)
 local target = 5
-local cost = model:backward(y)
+local cost = model:backward(target)
 ```
 
 ## Installation
