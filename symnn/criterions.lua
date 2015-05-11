@@ -55,8 +55,8 @@ local CrossEntropy = Class {
    params = {},
 
    __init__ = function(self)
-      self.lsm = symtorch.LogSoftMax()
-      self.nll = symtorch.ClassNLL()
+      self.lsm = symnn.LogSoftMax()
+      self.nll = symnn.ClassNLL()
    end,
 
    forward = function(self, input)
