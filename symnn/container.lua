@@ -67,7 +67,7 @@ local Sequential = Class {
       self.nsteps = self.nsteps + 1
 
       local t = torch.tic()
-      local output = self:forward(input)
+      local output = self:forward(input).w
       local t2 = torch.tic()
       local ftime = t2 - t
 
