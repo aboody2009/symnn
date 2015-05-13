@@ -11,7 +11,7 @@ local SpatialConvolution = Class {
 
    forward = function(self, input)
       local conv = symtorch.conv2d(input, self.W, self.stride, self.pad)
-      local b = symtorch.Tensor(conv:size())
+      local b = symtorch.Tensor(conv.w:size())
       for i = 1, self.filterSize[1] do
          b[i]:fill(self.b[i])
       end

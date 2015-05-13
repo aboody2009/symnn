@@ -44,7 +44,7 @@ local Dropout = Class {
 
    forward = function(self, input)
       if self.training then
-         local dist = symtorch.rng.binomial(input.w:size(), 1 - p)
+         local dist = symtorch.rng.binomial(input.w:size(), 1 - self.p)
          return input * dist
       else
          return input

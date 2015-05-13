@@ -96,6 +96,11 @@ local Sequential = Class {
    training = function(self, val)
       self.isTraining = val
       _graph.needsBackprop = val
+      for i = 1, #self.layers do
+         if self.layers[i].training ~= nil then
+            self.layers[i].training = val
+         end
+      end
    end,
 
    __len = function(self) return #self.layers end,
@@ -104,7 +109,7 @@ local Sequential = Class {
       local tab = '  '
       local line = '\n'
       local next = ' -> '
-      local str = 'nn.Sequential {' .. line .. tab .. '[input'
+      local str = 'symnn.Sequential {' .. line .. tab .. '[input'
       for i = 1, #self.layers do
          str = str .. next .. '(' .. i .. ')'
       end
