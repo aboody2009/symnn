@@ -1,21 +1,18 @@
 local SpatialConvolution = Class {
    __init__ = function(self, nfilters, sx, sy, stride, pad)
-      self.filterSize = {nfilters, sx, sy}
-      self.W = symtorch.Tensor(nfilters, sx, sy)
+      self.filterSize = { nfilters, sx, sy }
+      self.W = symtorch.Tensor(nfilters, sx, sy):rand()
       self.b = symtorch.Tensor(nfilters)
       self.params = { self.W, self.b }
 
       self.stride = stride or 1
       self.pad = pad or 0
+      self.resized = false
    end,
 
    forward = function(self, input)
       local conv = symtorch.conv2d(input, self.W, self.stride, self.pad)
-      local b = symtorch.Tensor(conv.w:size())
-      for i = 1, self.filterSize[1] do
-         b[i]:fill(self.b[i])
-      end
-      return conv + b
+      return conv:depthAdd(self.b)
    end,
 
    __tostring = function(self) return 'symnn.SpatialConvolution' end

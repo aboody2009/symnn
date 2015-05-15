@@ -2,7 +2,7 @@ local Linear = Class {
    __init__ = function(self, inputSize, outputSize)
       self.W = symtorch.Tensor(outputSize, inputSize):rand()
       self.b = symtorch.Tensor(outputSize)
-      self.params = {self.W, self.b}
+      self.params = { self.W, self.b }
    end,
 
    forward = function(self, input)
