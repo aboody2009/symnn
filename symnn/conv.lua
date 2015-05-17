@@ -7,7 +7,6 @@ local SpatialConvolution = Class {
 
       self.stride = stride or 1
       self.pad = pad or 0
-      self.resized = false
    end,
 
    forward = function(self, input)
