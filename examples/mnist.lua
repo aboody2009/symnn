@@ -31,12 +31,8 @@ if opt.model == 'conv' then
    model:add(nn.ReLU())
    model:add(nn.SpatialMaxPooling(2, 2, 2))
    if opt.dropout then model:add(nn.Dropout()) end
-   model:add(nn.SpatialConvolution(16, 5, 5, 1, 2))
-   model:add(nn.ReLU())
-   model:add(nn.SpatialMaxPooling(3, 3, 3))
-   if opt.dropout then model:add(nn.Dropout()) end
-   model:add(nn.Reshape(256))
-   model:add(nn.Linear(256, 10))
+   model:add(nn.Reshape(8*14*14))
+   model:add(nn.Linear(8*14*14, 10))
 elseif opt.model == 'mlp' then
    model:add(nn.Reshape(784))
    model:add(nn.Linear(784, 100))
@@ -82,6 +78,7 @@ local function train()
       local stats = model:train(x, target, accuracy)
       confusion:add(stats.output, target)
       xlua.progress(i, trainData.size)
+      --print(i, stats.accuracy)
    end
    print(confusion)
    confusion:zero()

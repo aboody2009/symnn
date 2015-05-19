@@ -10,8 +10,8 @@ local SpatialConvolution = Class {
    end,
 
    forward = function(self, input)
-      local conv = symtorch.conv2d(input, self.W, self.stride, self.pad)
-      return conv:depthAdd(self.b)
+      return symtorch.conv2d(input,
+         self.W, self.stride, self.pad, self.b)
    end,
 
    __tostring = function(self) return 'symnn.SpatialConvolution' end
