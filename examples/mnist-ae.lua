@@ -1,5 +1,5 @@
 local qlua = false
-if torch == nil then --qlua
+if torch == nil then --qlua or luajit
    require 'torch'
    require 'trepl'
    qlua = true

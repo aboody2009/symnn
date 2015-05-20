@@ -1,3 +1,8 @@
+if torch == nil then --luajit
+   require 'torch'
+   require 'trepl'
+end
+
 local nn = require '../symnn'
 local mnist = require 'mnist' -- https://github.com/andresy/mnist
 require 'optim'
