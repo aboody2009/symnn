@@ -7,8 +7,8 @@ As much as symtorch is still a work-in-progress, symnn is a work-in-progress eve
 ## TODO:
 * Test and get everything actually working
 * Examples
-  1. MNIST
-  2. Autoencoder like?
+  1. MNIST -- done
+  2. Autoencoder like -- done
   3. Image captioning like?
 * more training/optim methods
 * LeakyReLU/PReLU

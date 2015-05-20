@@ -15,13 +15,13 @@ local Linear = Class {
 local Reshape = Class {
    params = {},
 
-   __init__ = function(self, shape)
-      self.shape = shape
+   __init__ = function(self, ...)
+      self.shape = {...}
    end,
 
    forward = function(self, input)
-      input.w:resize(self.shape)
-      input.dw:resize(self.shape)
+      input.w:resize(unpack(self.shape))
+      input.dw:resize(unpack(self.shape))
       return input
    end,
 
