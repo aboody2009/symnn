@@ -5,16 +5,10 @@ Neural Networks for [symtorch](https://github.com/benglard/symtorch).
 As much as symtorch is still a work-in-progress, symnn is a work-in-progress even more so.
 
 ## TODO:
-* Test and get everything actually working
-* Examples
-  1. MNIST -- done
-  2. Autoencoder like -- done
-  3. RNN Language Model -- in progress
-  4. Image captioning like?
 * more training/optim methods
-* LeakyReLU/PReLU
-* Embedding layers
-* preprocessing
+* more layers
+* preprocessing?
+* more examples
 * even more
 
 ## Example Usage

@@ -197,10 +197,10 @@ function test()
    local word = 'the'
    local elem = vocab.word2idx[word]
    local output = model:forward(elem).w
-   for i = 1, 5 do
+   for i = 1, 20 do
       local max, argmax = output:max(1)
       argmax = argmax:squeeze()
-      print(word .. ' ' .. vocab.idx2word[argmax])
+      print('the ' .. vocab.idx2word[argmax])
       output[argmax] = 0
    end
 
@@ -214,7 +214,7 @@ function test()
          xlua.progress(i, testData.size)
       end
 
-      if i % 1000 == 0 then
+      if opt.debug and i % 1000 == 0 then
          print(sum / i)
       end
    end
