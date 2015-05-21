@@ -85,6 +85,7 @@ local Sequential = Class {
       end
 
       return {
+         n = self.nsteps,
          output = output,
          cost = cost,
          forwardTime = ftime,

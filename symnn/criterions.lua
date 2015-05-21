@@ -1,5 +1,6 @@
 local ClassNLL = Class {
    params = {},
+   eps = 1e-5,
 
    forward = function(self, input, output)
       self.input = input
@@ -10,7 +11,8 @@ local ClassNLL = Class {
    backward = function(self, target)
       local argmax
       if type(target) == 'number' then
-         assert(target > 0 and target <= self.input.w:size(1))
+         assert(target > 0 and target <= self.input.w:size(1),
+            'ClassNLL target out of range')
          argmax = target
       elseif target.name == 'Tensor' then
          target, argmax = target.w:max(1)
@@ -19,7 +21,7 @@ local ClassNLL = Class {
 
       self.input.dw:copy(self.output.w)
       self.input.dw[argmax] = self.input.dw[argmax] - 1
-      local cost = -torch.log(self.output.w[argmax])
+      local cost = -torch.log(self.output.w[argmax] + self.eps)
       return cost
    end,
 
@@ -38,8 +40,14 @@ local MSE = Class {
    backward = function(self, target)
       if type(target) == 'number' then
          local argmax = target
+         local size = self.input.w:size(1)
+         local dim = self.input.w:dim()
          target = torch.zeros(self.input.w:size())
-         target[argmax] = 1.0
+         if dim == 1 and size == 1 then
+            target[1] = argmax
+         else
+            target[argmax] = 1.0
+         end
       end
 
       local diff = torch.add(self.input.w, -target)
@@ -84,7 +92,8 @@ local Hinge = Class {
    backward = function(self, target)
       local argmax
       if type(target) == 'number' then
-         assert(target > 0 and target <= self.input.w:size(1))
+         assert(target > 0 and target <= self.input.w:size(1)
+            'Hinge target out of range')
          argmax = target
       elseif target.name == 'Tensor' then
          target, argmax = target.w:max(1)

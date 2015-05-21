@@ -29,6 +29,8 @@ local RNN = Class {
 
    forward = function(self, input)
       local function step(i, x_t, prev_h)
+         -- Modeled after http://arxiv.org/pdf/1409.3215.pdf
+         -- First 2 equations of §2
          h_t = sigmoid(self.W_hx:dot(x_t) + self.W_hh:dot(prev_h) + self.b_i)
          y_t = self.W_hy:dot(h_t) + self.b_y
          self.prev_h[i] = h_t
@@ -37,9 +39,11 @@ local RNN = Class {
 
       local res = symtorch.scan{
          fn = step,
-         sequences = {input, self.prev_h}
+         sequences = {input, self.prev_h},
+         nsteps = 1
       }
-      local final = res[#res][1]
+
+      local final = res[#res][2]
       return self.W_od:dot(final) + self.b_od
    end,
 
@@ -100,7 +104,8 @@ local LSTM = Class {
 
       local res = symtorch.scan{
          fn = step,
-         sequences = {input, self.prev_h, self.prev_c}
+         sequences = {input, self.prev_h, self.prev_c},
+         nsteps = 1
       }
       local final = res[#res][1]
       return self.W_od:dot(final) + self.b_od

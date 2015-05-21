@@ -6,6 +6,7 @@ symnn = Package {
    'nonlinearities',
    'conv',
    'recurrent',
+   'embeddings',
    'criterions',
    'optim'
 }
