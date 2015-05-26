@@ -47,6 +47,7 @@ local Dropout = Class {
          local dist = symtorch.rng.binomial(input.w:size(), 1 - self.p)
          return input * dist
       else
+         input.w:mul(self.p)
          return input
       end
    end,
